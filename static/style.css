@@ -1,0 +1,80 @@
+.body {
+    width: 650px;
+    margin: 0 auto;
+}
+
+h1 {
+    text-align: center;
+}
+
+form {
+    text-align: right;
+    margin: 0 0 2em 0;
+}
+
+#message {
+    width: 70%;
+}
+
+.timestamp {
+    color: #999;
+    position: absolute;
+    left: 100%;
+    padding-left: 1em;
+    text-align: left;
+    width: 160px;
+    font-size: 80%;
+}
+
+.attachment a {
+    padding-left: .5em;
+    text-decoration: none;
+}
+
+/* .tip .timestamp {
+    float: right;
+}
+
+.reply .timestamp {
+    float: left;
+    padding-left: 1em;
+} */
+
+ul {
+    margin: 0;
+    padding: 0;
+}
+
+li {
+    list-style: none;
+    margin: 0 0 .25em 0;
+    padding: .1em 1em .1em 0;
+}
+
+li li {
+    list-style: none;
+    position: relative;
+}
+
+li .tip {
+    padding-left: 1em;
+    text-align: left;
+    background: #eee;
+}
+
+li .reply {
+    text-align: right;
+    background: #ccc;
+}
+
+.sr-only {
+    border: 0; 
+    clip: rect(0 0 0 0); 
+    height: 1px; 
+    margin: -1px;
+    overflow: hidden;
+    padding: 0;
+    position: absolute;
+    width: 1px;
+}
+                                                  
