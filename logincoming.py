@@ -9,9 +9,9 @@ import subprocess
 import shutil
 
 import magic
-import pydbus
 
 import loadsignal
+import pydbus
 
 from datetime import datetime
 
@@ -22,14 +22,12 @@ from settings import NUMBER, database
 sitepath = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'static')
 
 class SignalMessage:
-    def __init__(self, timestamp, source, recipient, groupID, message, 
-                 attachments, rowid=None):
+    def __init__(self, timestamp, source, recipient, groupID, message, attachments):
         self.timestamp = timestamp
         self.source = source
         self.recipient = recipient
         self.groupID = groupID
         self.message = message
-        self.rowid = rowid
 
         if attachments:
             self.attachments = attachments
@@ -70,8 +68,8 @@ def log_msg(timestamp, source, groupID, message, attachments):
         
         guessed_mimetype = magic.from_file(rec_path, mime=True)
         long_mimetypes_dict = {**mimetypes.types_map, **mimetypes.common_types}
-        del long_mimetypes_dict['.jpe'] # annoying, but these are just
-        del long_mimetypes_dict['.mp2'] # unlikely extensions, so skip 'em.
+        del long_mimetypes_dict['.jpe']
+        del long_mimetypes_dict['.mp2']
         guessed_ext = next((ext for ext in long_mimetypes_dict if
                        long_mimetypes_dict.get(ext) == guessed_mimetype), 
                        '.attach')

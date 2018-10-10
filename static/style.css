@@ -16,26 +16,6 @@ form {
     width: 70%;
 }
 
-.thread-header {
-    position: relative;
-}
-
-.thread-header .delete-button {
-    position: absolute;
-    top: 5px;
-    left: -2em;
-}
-
-li li .delete-button {
-    position: absolute;
-    left: -2em;
-}
-
-.delete-button a {
-    text-decoration: none;
-}
-
-
 .timestamp {
     color: #999;
     position: absolute;
