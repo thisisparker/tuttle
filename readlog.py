@@ -107,9 +107,9 @@ def main():
         with thread.add(form(method='post', cls='reply-form')).add(p()):
             label('Send a message to {}'.format(num), fr='message',
                     cls='sr-only')
-            input_(type='textarea', name='message', id='message',
+            input_(type='textarea', name='message', cls='message',
                     placeholder='Message to {}'.format(num))
-            input_(type='hidden', name='recipient', id='recipient',
+            input_(type='hidden', name='recipient', cls='recipient',
                     value=num)
             input_(type='submit', value='Reply')
 
