@@ -36,9 +36,9 @@ def main():
     h.title = 'tipline tips'
 
     with h.head:
-        link(rel="stylesheet", href="style.css")
+        link(rel="stylesheet", href="/style.css")
 
-    body = h.add(div(cls='body'))
+    body = h.add(div(id='body'))
 
     body.add(h1("tipline messages"))
 
