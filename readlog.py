@@ -78,12 +78,15 @@ def main():
                     msg_class = 'reply'
                     sayswho = span('You said: ', cls='sr-only')
 
+                if not msg_text:
+                    msg_text = raw('&nbsp;')
+
                 if msg.timestamp:
-                    sent_at = span(msg.timestamp, cls='timestamp')
+                    sent_at = span(' ' + msg.timestamp, cls='timestamp')
                 else:
                     sent_at = ''
 
-                attachment_indicator = '📎&#xFE0E;'
+                attachment_indicator = ' 📎&#xFE0E'
 
                 if msg.attachments:
                     has_attachments = span(a(raw(attachment_indicator),

@@ -5,7 +5,11 @@ import readlog
 import sendmsg
 import deletemsg
 
+import sqlite3
+
 from flask import Flask, request, send_from_directory
+
+from settings import database
 
 app = Flask(__name__)
 
@@ -26,10 +30,24 @@ def serve_home():
         if thread_to_delete:
             deletemsg.msg_thread(thread_to_delete)
 
+        msg = sendmsg.send(recipient, message)
+
+        conn = sqlite3.connect(database)
+
+        msg.log_to_db(conn)
+        print("- logging reply to db")
+
+        conn.commit()
+
     return readlog.main() 
 
 @app.route('/config', methods=['GET', 'POST'])
 def serve_config():
+    if request.method == 'POST':
+        autoresponder = request.form.get('autoresponder')
+        hidservauth = request.form.get('hidservauth')
+        rotateonions = request.form.get('rotate-onions')
+
     return configpage.main()
 
 @app.route('/style.css')

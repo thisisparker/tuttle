@@ -39,9 +39,11 @@ def main():
                     rows=6))
         li(label(h2("authentication options"), fr='auth', __pretty=False),
             fieldset(
-                input_(type='radio', id='rotate-onions', name='auth'),
+                input_(type='radio', id='rotate-onions', name='auth', 
+                       value='rotate-onions'),
                 label("Rotate Onion URLs", fr='rotate-onions'), br(),
-                input_(type='radio', id='hidservauth', name='auth'),
+                input_(type='radio', id='hidservauth', name='auth',
+                       value='hidservauth'),
                 label("Use HidServAuth authentication", fr='hidservauth')))
 
     config_options.add(input_(type='submit', value='Save settings', 
