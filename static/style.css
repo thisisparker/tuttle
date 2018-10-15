@@ -3,6 +3,25 @@
     margin: 0 auto;
 }
 
+#nav {
+    margin: 0;
+    padding: .2em 0 .2em 1em;
+    background: #333;
+    color: #fff;
+}
+
+#navlinks {
+    float: right;
+}
+
+#navlinks a {
+    color: #fff;
+}
+
+#navlinks li {
+    display: inline;
+}
+
 h1 {
     text-align: center;
 }

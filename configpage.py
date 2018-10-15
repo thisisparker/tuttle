@@ -4,6 +4,8 @@ import sqlite3
 
 import dominate
 
+from readlog import add_navbar
+
 from dominate.tags import *
 
 from settings import NUMBER, database
@@ -18,6 +20,8 @@ def main():
 
     with h.head:
         link(rel="stylesheet", href="/style.css")
+
+    h.body = add_navbar(h.body)
         
     body = h.add(div(id='body'))
 

@@ -11,6 +11,19 @@ from logincoming import SignalMessage
 
 from settings import NUMBER, database
 
+def add_navbar(body):
+    nav = body.add(div(id='nav', __pretty=False))
+
+    ident = span("Hello, {}!".format(NUMBER), id='ident', __pretty=False)
+    navlinks = ul(id='navlinks', __pretty=False)
+
+    navlinks += li(a("home", href="/"))
+    navlinks += li(a("config", href="/config"))
+
+    nav.add(ident, navlinks)
+
+    return body
+
 def main():
     conn = sqlite3.connect(database)
 
@@ -37,6 +50,8 @@ def main():
 
     with h.head:
         link(rel="stylesheet", href="/style.css")
+
+    h.body = add_navbar(h.body)
 
     body = h.add(div(id='body'))
 
