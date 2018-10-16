@@ -50,8 +50,23 @@ def main():
     for num in numbers:
         msgs = [msg for msg in messages if 
                 msg.source == num or msg.recipient == num]
+
         thread = contactlist.add(li())
-        thread.add(h2('messages with {}'.format(num)))
+
+        delete_button = '❌'
+
+        thread_delete = form(method='post', cls='delete-thread')
+
+        delete_thread_button = button(raw(delete_button), cls='delete-button',
+                                title='delete entire thread',
+                                name='delete-thread', type='submit',
+                                value=num)
+
+        thread_delete.add(delete_thread_button)
+
+        thread.add(div(thread_delete, h2('messages with {}'.format(num)),
+                       cls='thread-header', __pretty=False))
+        
         with thread.add(ul()):
             for msg in msgs:
                 if msg.source == num:
