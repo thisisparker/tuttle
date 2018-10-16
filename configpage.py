@@ -14,6 +14,9 @@ userlist = [{'user':'useruseruser', 'number': '+12125551212'},
             {'user':'testtesttest', 'number': '+12028675309'},
            ]
 
+def update_autoresponder(text):
+    print("ok")
+
 def main():
     h = dominate.document()
     h.title = 'configuration'
