@@ -48,8 +48,8 @@ def serve_config():
         hidservauth = request.form.get('hidservauth')
         rotateonions = request.form.get('rotate-onions')
 
-    if autoresponder:
-        configpage.update_autoresponder(autoresponder)
+        if autoresponder:
+            configpage.update_autoresponder(autoresponder)
 
     return configpage.main()
 
