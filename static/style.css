@@ -7,9 +7,52 @@ h1 {
     text-align: center;
 }
 
-form {
+form.reply-form {
     text-align: right;
     margin: 0 0 2em 0;
+}
+
+button.delete-button {
+    background: none;
+    border: none;
+}
+
+.delete-msg {
+    position: absolute;
+    left: -3em;
+}
+
+.delete-thread {
+    position: absolute;
+    left: -3em;
+}
+
+form.delete-msg {
+    height: 2em;
+    width: 2em;
+}
+
+form.delete-thread {
+    height: 2em;
+    width: 2em;
+}
+
+form.delete-msg:hover button {
+    display: inline;
+}
+
+.delete-msg button {
+    display: none;
+    cursor: pointer;
+}
+
+form.delete-thread:hover button {
+    display: inline;
+}
+
+.delete-thread button {
+    display: none;
+    cursor: pointer;
 }
 
 #message {
@@ -19,23 +62,13 @@ form {
 .thread-header {
     position: relative;
 }
-
+/*
 .thread-header .delete-button {
     position: absolute;
     top: 5px;
     left: -2em;
 }
-
-li li .delete-button {
-    position: absolute;
-    left: -2em;
-}
-
-.delete-button a {
-    text-decoration: none;
-}
-
-
+*/
 .timestamp {
     color: #999;
     position: absolute;
@@ -50,15 +83,6 @@ li li .delete-button {
     padding-left: .5em;
     text-decoration: none;
 }
-
-/* .tip .timestamp {
-    float: right;
-}
-
-.reply .timestamp {
-    float: left;
-    padding-left: 1em;
-} */
 
 ul {
     margin: 0;
@@ -97,4 +121,3 @@ li .reply {
     position: absolute;
     width: 1px;
 }
-                                                  

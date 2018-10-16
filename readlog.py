@@ -51,11 +51,21 @@ def main():
         msgs = [msg for msg in messages if 
                 msg.source == num or msg.recipient == num]
         thread = contactlist.add(li())
-        delete_button = '🗑&#xFE0E;'
-        thread.add(div(span(a(raw(delete_button), href="#"),
-                       cls='delete-button'),
-                       h2('messages with {}'.format(num)),
+
+        delete_button = '❌'
+
+        thread_delete = form(method='post', cls='delete-thread')
+
+        delete_thread_button = button(raw(delete_button), cls='delete-button',
+                                title='delete entire thread',
+                                name='delete-thread', type='submit',
+                                value=num)
+
+        thread_delete.add(delete_thread_button)
+
+        thread.add(div(thread_delete, h2('messages with {}'.format(num)),
                        cls='thread-header', __pretty=False))
+
         with thread.add(ul()):
             for msg in msgs:
                 if msg.source == num:
@@ -81,13 +91,19 @@ def main():
                 else:
                     has_attachments = ''
 
-                msg_delete = span(a(raw(delete_button), href="#"),
-                                  cls='delete-button')
+                msg_delete = form(method='post', cls='delete-msg')
+
+                delete_msg_button = button(raw(delete_button),
+                                  cls='delete-button', title="delete message",
+                                  name='delete-msg', type='submit', 
+                                  value=msg.rowid)
+
+                msg_delete.add(delete_msg_button)
 
                 li(msg_delete, sayswho, msg_text, sent_at, has_attachments,
                     cls=msg_class, __pretty=False)
 
-        with thread.add(form(method='post')).add(p()):
+        with thread.add(form(method='post', cls='reply-form')).add(p()):
             label('Send a message to {}'.format(num), fr='message',
                     cls='sr-only')
             input_(type='textarea', name='message', id='message',
