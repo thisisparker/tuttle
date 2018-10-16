@@ -66,7 +66,7 @@ def main():
 
         thread.add(div(thread_delete, h2('messages with {}'.format(num)),
                        cls='thread-header', __pretty=False))
-        
+
         with thread.add(ul()):
             for msg in msgs:
                 if msg.source == num:
@@ -104,7 +104,7 @@ def main():
                 li(msg_delete, sayswho, msg_text, sent_at, has_attachments,
                     cls=msg_class, __pretty=False)
 
-        with thread.add(form(method='post')).add(p()):
+        with thread.add(form(method='post', cls='reply-form')).add(p()):
             label('Send a message to {}'.format(num), fr='message',
                     cls='sr-only')
             input_(type='textarea', name='message', id='message',
