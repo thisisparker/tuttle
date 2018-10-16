@@ -16,6 +16,10 @@ form {
     width: 70%;
 }
 
+.thread-header {
+    position: relative;
+}
+
 .timestamp {
     color: #999;
     position: absolute;

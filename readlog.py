@@ -21,7 +21,7 @@ def main():
 
     for msg in msgdb:
         sigmsg = SignalMessage(msg[6], msg[1], msg[2], msg[3], \
-                               msg[4], msg[5])
+                               msg[4], msg[5], msg[0])
         messages.append(sigmsg)
 
     numbers = []
@@ -77,7 +77,16 @@ def main():
                 else:
                     has_attachments = ''
 
-                li(sayswho, msg_text, sent_at, has_attachments, 
+                msg_delete = form(method='post', cls='delete-msg')
+
+                delete_msg_button = button(raw(delete_button),
+                                  cls='delete-button', title="delete message",
+                                  name='delete-msg', type='submit', 
+                                  value=msg.rowid)
+
+                msg_delete.add(delete_msg_button)
+
+                li(msg_delete, sayswho, msg_text, sent_at, has_attachments,
                     cls=msg_class, __pretty=False)
 
         with thread.add(form(method='post')).add(p()):
