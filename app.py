@@ -3,6 +3,7 @@
 import configpage
 import readlog
 import sendmsg
+import deletemsg
 
 from flask import Flask, request, send_from_directory
 
@@ -13,8 +14,17 @@ def serve_home():
     if request.method == 'POST':
         recipient = request.form.get('recipient')
         message = request.form.get('message')
+        msg_to_delete = request.form.get('delete-msg')
+        thread_to_delete = request.form.get('delete-thread')
 
-        sendmsg.send(recipient, message)
+        if recipient and message:
+            sendmsg.send(recipient, message)
+
+        if msg_to_delete:
+            deletemsg.single_msg(msg_to_delete)
+
+        if thread_to_delete:
+            deletemsg.msg_thread(thread_to_delete)
 
     return readlog.main() 
 
