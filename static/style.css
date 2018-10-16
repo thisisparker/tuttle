@@ -62,13 +62,7 @@ form.delete-thread:hover button {
 .thread-header {
     position: relative;
 }
-/*
-.thread-header .delete-button {
-    position: absolute;
-    top: 5px;
-    left: -2em;
-}
-*/
+
 .timestamp {
     color: #999;
     position: absolute;

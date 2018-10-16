@@ -21,7 +21,7 @@ def main():
 
     for msg in msgdb:
         sigmsg = SignalMessage(msg[6], msg[1], msg[2], msg[3], \
-                               msg[4], msg[5], msg[0])
+                               msg[4], msg[5])
         messages.append(sigmsg)
 
     numbers = []
@@ -50,6 +50,7 @@ def main():
     for num in numbers:
         msgs = [msg for msg in messages if 
                 msg.source == num or msg.recipient == num]
+        
         thread = contactlist.add(li())
 
         delete_button = '❌'
@@ -90,6 +91,7 @@ def main():
                         target='_blank'), cls='attachment')
                 else:
                     has_attachments = ''
+
 
                 msg_delete = form(method='post', cls='delete-msg')
 
