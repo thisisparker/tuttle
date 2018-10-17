@@ -7,7 +7,7 @@ import deletemsg
 
 import sqlite3
 
-from flask import Flask, request, send_from_directory
+from flask import Flask, redirect, request, send_from_directory, url_for
 
 from settings import database
 
@@ -34,6 +34,8 @@ def serve_home():
         if thread_to_delete:
             deletemsg.msg_thread(thread_to_delete)
 
+        return redirect(url_for("serve_home"))
+
     return readlog.main() 
 
 @app.route('/config', methods=['GET', 'POST'])
@@ -45,6 +47,8 @@ def serve_config():
 
         if autoresponder:
             configpage.update_autoresponder(autoresponder)
+
+        return redirect(url_for("serve_config"))
 
     return configpage.main()
 
