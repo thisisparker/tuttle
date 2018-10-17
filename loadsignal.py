@@ -17,7 +17,8 @@ def load(number):
         print('- no Signal process found, starting Signal')
         command = 'signal-cli -u {} daemon'.format(number).split()
         print('- Signal starting, waiting to connect')
-        subprocess.Popen(command, stderr=subprocess.DEVNULL, stdout=subprocess.DEVNULL)
+        subprocess.Popen(command, stderr=subprocess.DEVNULL, 
+                                  stdout=subprocess.DEVNULL)
         while signal == None:
             try:
                 signal = bus.get('org.asamk.Signal')

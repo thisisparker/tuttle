@@ -5,7 +5,9 @@ import readlog
 import sendmsg
 import deletemsg
 
-from flask import Flask, request, send_from_directory
+import sqlite3
+
+from flask import Flask, redirect, request, send_from_directory, url_for
 
 app = Flask(__name__)
 
@@ -26,10 +28,22 @@ def serve_home():
         if thread_to_delete:
             deletemsg.msg_thread(thread_to_delete)
 
+        return redirect(url_for("serve_home"))
+
     return readlog.main() 
 
 @app.route('/config', methods=['GET', 'POST'])
 def serve_config():
+    if request.method == 'POST':
+        autoresponder = request.form.get('autoresponder')
+        hidservauth = request.form.get('hidservauth')
+        rotateonions = request.form.get('rotate-onions')
+
+        if autoresponder:
+            configpage.update_autoresponder(autoresponder)
+
+        return redirect(url_for("serve_config"))
+
     return configpage.main()
 
 @app.route('/style.css')

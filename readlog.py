@@ -16,11 +16,12 @@ def main():
 
     collist = "rowid, source, recipient, groupID, message, attachments, datetime(timestamp, 'localtime')"
 
-    msgdb = conn.execute('select {} from messages'.format(collist)).fetchall()
+    msgdb = conn.execute('select {} from messages order by timestamp asc'
+                         .format(collist)).fetchall()
     messages = []
 
     for msg in msgdb:
-        sigmsg = SignalMessage(msg[6], msg[1], msg[2], msg[3], \
+        sigmsg = SignalMessage(msg[6], msg[1], msg[2], msg[3],
                                msg[4], msg[5], msg[0])
         messages.append(sigmsg)
 
