@@ -7,6 +7,7 @@ import sqlite3
 import time
 import subprocess
 import shutil
+import yaml
 
 import magic
 import pydbus
@@ -60,6 +61,19 @@ def create_database():
     conn.commit()
     conn.close()
 
+def send_notifications():
+    import sendmsg
+
+    try:
+        with open("config.yaml") as f:
+            config = yaml.safe_load(f)
+    except OSError as err:
+        config = {'notifications': [], 'autoresponder': ''}
+
+    userlist = config['notifications']
+    for user in userlist:
+        sendmsg.send(user['number'], "There's a new message in your inbox.")
+
 def log_msg(timestamp, source, groupID, message, attachments):
     conn = sqlite3.connect(database)
 
@@ -86,6 +100,8 @@ def log_msg(timestamp, source, groupID, message, attachments):
 
     conn.commit()
     conn.close()
+
+    send_notifications()
 
 def main():
     if not os.path.isfile(database):
