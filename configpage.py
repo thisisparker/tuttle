@@ -3,16 +3,13 @@
 import sqlite3
 
 import dominate
+import yaml
 
 from readlog import add_navbar
 
 from dominate.tags import *
 
 from settings import NUMBER, database
-
-userlist = [{'user':'useruseruser', 'number': '+12125551212'},
-            {'user':'testtesttest', 'number': '+12028675309'},
-           ]
 
 def update_autoresponder(text):
     print("ok")
@@ -34,6 +31,15 @@ def main():
 
     notification_options = body.add(table(id='notifications-table'))
 
+    try:
+        with open("config.yaml") as f:
+            config = yaml.safe_load(f)
+    except OSError as err:
+        config = {'notifications': [], 'autoresponder': ''}
+
+    userlist = config['notifications']
+    autoresponder_text = config['autoresponder']
+
     for user in userlist:
         notification_options.add(tr(td(user['user']), td(user['number']),
             td(a('❌', href="#"))))
@@ -42,6 +48,7 @@ def main():
 
     with config_options.add(ul()):
         li(label(h2("autoresponder"), fr='autoresponder', __pretty=False),
+           p(strong('Current autoresponse text: '), autoresponder_text),
            textarea(id="autoresponder", name="autoresponder",
                     rows=6))
         li(label(h2("authentication options"), fr='auth', __pretty=False),
