@@ -3,6 +3,25 @@
     margin: 0 auto;
 }
 
+#nav {
+    margin: 0;
+    padding: .2em 0 .2em 1em;
+    background: #333;
+    color: #fff;
+}
+
+#navlinks {
+    float: right;
+}
+
+#navlinks a {
+    color: #fff;
+}
+
+#navlinks li {
+    display: inline;
+}
+
 h1 {
     text-align: center;
 }
@@ -55,7 +74,7 @@ form.delete-thread:hover button {
     cursor: pointer;
 }
 
-#message {
+.message {
     width: 70%;
 }
 
@@ -114,4 +133,18 @@ li .reply {
     padding: 0;
     position: absolute;
     width: 1px;
+}
+
+#notifications-table {
+    width: 60%;
+    clear: right;
+}
+
+#autoresponder {
+    width: 100%
+}
+
+#save-button {
+    margin-top: 1em;
+    float: right;
 }
