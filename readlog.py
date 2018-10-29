@@ -11,6 +11,19 @@ from logincoming import SignalMessage
 
 from settings import NUMBER, database
 
+def add_navbar(body):
+    nav = body.add(div(id='nav', __pretty=False))
+
+    ident = span("Hello, {}!".format(NUMBER), id='ident', __pretty=False)
+    navlinks = ul(id='navlinks', __pretty=False)
+
+    navlinks += li(a("home", href="/"))
+    navlinks += li(a("config", href="/config"))
+
+    nav.add(ident, navlinks)
+
+    return body
+
 def main():
     conn = sqlite3.connect(database)
 
@@ -38,6 +51,8 @@ def main():
 
     with h.head:
         link(rel="stylesheet", href="/style.css")
+
+    h.body = add_navbar(h.body)
 
     body = h.add(div(id='body'))
 
@@ -79,12 +94,15 @@ def main():
                     msg_class = 'reply'
                     sayswho = span('You said: ', cls='sr-only')
 
+                if not msg_text:
+                    msg_text = raw('&nbsp;')
+
                 if msg.timestamp:
-                    sent_at = span(msg.timestamp, cls='timestamp')
+                    sent_at = span(' ' + msg.timestamp, cls='timestamp')
                 else:
                     sent_at = ''
 
-                attachment_indicator = '📎&#xFE0E;'
+                attachment_indicator = ' 📎&#xFE0E'
 
                 if msg.attachments:
                     has_attachments = span(a(raw(attachment_indicator),
@@ -108,9 +126,9 @@ def main():
         with thread.add(form(method='post', cls='reply-form')).add(p()):
             label('Send a message to {}'.format(num), fr='message',
                     cls='sr-only')
-            input_(type='textarea', name='message', id='message',
+            input_(type='textarea', name='message', cls='message',
                     placeholder='Message to {}'.format(num))
-            input_(type='hidden', name='recipient', id='recipient',
+            input_(type='hidden', name='recipient', cls='recipient',
                     value=num)
             input_(type='submit', value='Reply')
 

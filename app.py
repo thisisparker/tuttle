@@ -9,6 +9,8 @@ import sqlite3
 
 from flask import Flask, redirect, request, send_from_directory, url_for
 
+from settings import database
+
 app = Flask(__name__)
 
 @app.route('/', methods=['GET', 'POST'])
@@ -20,7 +22,11 @@ def serve_home():
         thread_to_delete = request.form.get('delete-thread')
 
         if recipient and message:
-            sendmsg.send(recipient, message)
+            msg = sendmsg.send(recipient, message)
+            conn = sqlite3.connect(database)
+            msg.log_to_db(conn)
+            print("- logging reply to db")
+            conn.commit()
 
         if msg_to_delete:
             deletemsg.single_msg(msg_to_delete)
