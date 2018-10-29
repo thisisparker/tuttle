@@ -74,6 +74,22 @@ def send_notifications():
     for user in userlist:
         sendmsg.send(user['number'], "There's a new message in your inbox.")
 
+def send_autoresponse(sender):
+    import sendmsg
+
+    try:
+        with open("config.yaml") as f:
+            config = yaml.safe_load(f)
+    except OSError as err:
+        config = {'autoresponder':''}
+
+    conn = sqlite3.connect(database)
+    seen_num = conn.execute('select count(*) from messages where source = ?',
+            (sender,)).fetchone()[0]
+
+    if config['autoresponder'] and not seen_num:
+        sendmsg.send(sender, config['autoresponder'])
+
 def log_msg(timestamp, source, groupID, message, attachments):
     conn = sqlite3.connect(database)
 
@@ -96,6 +112,7 @@ def log_msg(timestamp, source, groupID, message, attachments):
 
     msg = SignalMessage(timestamp, source, NUMBER, groupID, 
                         message, attachments)
+    send_autoresponse(msg.source)
     msg.log_to_db(conn)
 
     conn.commit()
