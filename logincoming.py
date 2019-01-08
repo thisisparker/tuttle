@@ -58,7 +58,9 @@ def create_database():
                     groupID     text,
                     message     text,
                     attachments text,
-                    timestamp   timestamp);"""
+                    timestamp   timestamp,
+                    expires_in  integer,
+                    seen_at     timestamp);"""
     conn.executescript(schema_script)
     conn.commit()
     conn.close()
