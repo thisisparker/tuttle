@@ -26,12 +26,13 @@ sitepath = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'static')
 
 class SignalMessage:
     def __init__(self, timestamp, source, recipient, groupID, message, 
-                 attachments, rowid=None):
+                 attachments, expires_in=None, rowid=None):
         self.timestamp = timestamp
         self.source = source
         self.recipient = recipient
         self.groupID = groupID
         self.message = message
+        self.expires_in = expires_in
         self.rowid = rowid
 
         if attachments:
@@ -44,10 +45,11 @@ class SignalMessage:
 
     def log_to_db(self, conn):
         conn.execute("""insert into messages(
-                     source, recipient, message, attachments, timestamp)
-                     values (?, ?, ?, ?, ?)""",
+                            source, recipient, message, attachments,
+                            timestamp, expires_in)
+                            values (?, ?, ?, ?, ?, ?)""",
                      (self.source, self.recipient, self.message, 
-                         self.attachments, self.timestamp))
+                         self.attachments, self.timestamp, self.expires_in))
 
 def create_database():
     conn = sqlite3.connect(database)
@@ -103,6 +105,10 @@ def log_msg(jsonmsg):
         attachments = jsonmsg['dataMessage']['attachments'][0]
     except IndexError as err:
         attachments = []
+    try:
+        expires_in = jsonmsg['dataMessage']['expiresInSeconds']
+    except KeyError as err:
+        expires_in = None
 
     conn = sqlite3.connect(database)
 
@@ -118,7 +124,7 @@ def log_msg(jsonmsg):
         attachments = new_filename
 
     msg = SignalMessage(timestamp, source, NUMBER, groupID, 
-                        message, attachments)
+                        message, attachments, expires_in)
 
     send_autoresponse(msg.source)
     msg.log_to_db(conn)
