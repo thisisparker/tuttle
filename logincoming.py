@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
 
-import mimetypes
+import json
 import math
 import os
 import sqlite3
 import time
-import subprocess
+import shlex
 import shutil
 import yaml
 
@@ -15,11 +15,13 @@ import pydbus
 import loadsignal
 
 from datetime import datetime
+from subprocess import Popen, PIPE
 
 from gi.repository import GLib
 
 from settings import NUMBER, database
 
+signalpath = os.path.join(os.path.expanduser('~'), '.config', 'signal')
 sitepath = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'static')
 
 class SignalMessage:
@@ -90,28 +92,32 @@ def send_autoresponse(sender):
     if config['autoresponder'] and not seen_num:
         sendmsg.send(sender, config['autoresponder'])
 
-def log_msg(timestamp, source, groupID, message, attachments):
+def log_msg(jsonmsg):
+    timestamp = jsonmsg['timestamp']
+    source = jsonmsg['source']
+    groupID = jsonmsg['dataMessage']['groupInfo']
+    message = jsonmsg['dataMessage']['message']
+    try:
+        attachments = jsonmsg['dataMessage']['attachments'][0]
+    except IndexError as err:
+        attachments = []
+
     conn = sqlite3.connect(database)
 
-    if attachments and '.config' in attachments[0]:
-        attachpath = os.path.join(sitepath, 'attachments')
-        
-        rec_path = attachments[0]
-        
-        guessed_mimetype = magic.from_file(rec_path, mime=True)
-        long_mimetypes_dict = {**mimetypes.types_map, **mimetypes.common_types}
-        del long_mimetypes_dict['.jpe'] # annoying, but these are just
-        del long_mimetypes_dict['.mp2'] # unlikely extensions, so skip 'em.
-        guessed_ext = next((ext for ext in long_mimetypes_dict if
-                       long_mimetypes_dict.get(ext) == guessed_mimetype), 
-                       '.attach')
+    if attachments:
+        attachment_id = str(attachments['id'])
+        new_filename = '-'.join([attachment_id, attachments['filename']])
+        attach_path = os.path.join(sitepath, 'attachments')
+        rec_path = os.path.join(signalpath, 'attachments', attachment_id)
+        new_path = os.path.join(attach_path, new_filename)
 
-        filename = os.path.basename(rec_path) + guessed_ext
-        shutil.move(rec_path, os.path.join(attachpath, filename))
-        attachments = filename
+        shutil.move(rec_path, new_path)
+
+        attachments = new_filename
 
     msg = SignalMessage(timestamp, source, NUMBER, groupID, 
                         message, attachments)
+
     send_autoresponse(msg.source)
     msg.log_to_db(conn)
 
@@ -120,6 +126,21 @@ def log_msg(timestamp, source, groupID, message, attachments):
 
     send_notifications()
 
+def signal_loop():
+    print('- starting Signal instance')
+
+    command = shlex.split('signal-cli -u {} daemon --json'.format(NUMBER))
+
+    with Popen(command, stdout=PIPE, bufsize=1, universal_newlines=True) as p:
+        print('- ready to receive messages')
+
+        for line in p.stdout:
+            jsonmsg = json.loads(line)['envelope']
+            if (not jsonmsg['isReceipt'] and
+                    (jsonmsg['dataMessage']['message'] or
+                    jsonmsg['dataMessage']['attachments'])):
+                log_msg(jsonmsg)
+
 def main():
     if not os.path.isfile(database):
         print('- no logging database found, creating one now')
@@ -127,14 +148,7 @@ def main():
 
     print('- logging messages at {}'.format(database))
 
-    signal = loadsignal.load(NUMBER)    
-
-    signal.onMessageReceived = log_msg
-
-    print('- ready to receive messages')
-
-    loop = GLib.MainLoop()
-    loop.run()
+    signal_loop()
 
 if __name__ == '__main__':
     main()

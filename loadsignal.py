@@ -13,18 +13,8 @@ def load(number):
     signal = None 
     try:
         signal = bus.get('org.asamk.Signal')
+        print('- connected to Signal process')
+        return signal
     except GLib.Error:
-        print('- no Signal process found, starting Signal')
-        command = 'signal-cli -u {} daemon'.format(number).split()
-        print('- Signal starting, waiting to connect')
-        subprocess.Popen(command, stderr=subprocess.DEVNULL, 
-                                  stdout=subprocess.DEVNULL)
-        while signal == None:
-            try:
-                signal = bus.get('org.asamk.Signal')
-            except GLib.Error:
-                pass
-
-    print('- connected to Signal process')
-
-    return signal
+        print('- no Signal process found')
+        return None
