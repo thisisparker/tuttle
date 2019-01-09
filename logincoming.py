@@ -26,13 +26,14 @@ sitepath = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'static')
 
 class SignalMessage:
     def __init__(self, timestamp, source, recipient, groupID, message, 
-                 attachments, expires_in=None, rowid=None):
+                 attachments, expires_in=None, seen_at=None, rowid=None):
         self.timestamp = timestamp
         self.source = source
         self.recipient = recipient
         self.groupID = groupID
         self.message = message
         self.expires_in = expires_in
+        self.seen_at = seen_at
         self.rowid = rowid
 
         if attachments:
@@ -41,15 +42,16 @@ class SignalMessage:
             self.attachments = None
 
         if type(self.timestamp) == int:
-            self.timestamp = datetime.utcfromtimestamp(math.floor(self.timestamp/1000))
+            self.timestamp = datetime.utcfromtimestamp(
+                    math.floor(self.timestamp/1000))
 
     def log_to_db(self, conn):
-        conn.execute("""insert into messages(
-                            source, recipient, message, attachments,
-                            timestamp, expires_in)
-                            values (?, ?, ?, ?, ?, ?)""",
-                     (self.source, self.recipient, self.message, 
-                         self.attachments, self.timestamp, self.expires_in))
+        conn.execute("""insert or replace into messages(
+                            rowid, source, recipient, message, attachments,                                   timestamp, expires_in, seen_at)
+                            values (?, ?, ?, ?, ?, ?, ?, ?)""",
+                     (self.rowid, self.source, self.recipient, 
+                         self.message, self.attachments, self.timestamp,
+                         self.expires_in, self.seen_at))
 
 def create_database():
     conn = sqlite3.connect(database)

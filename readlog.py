@@ -5,6 +5,8 @@ import textwrap
 
 import dominate
 
+from datetime import datetime
+
 from dominate.tags import *
 from dominate.util import raw
 from logincoming import SignalMessage
@@ -27,7 +29,7 @@ def add_navbar(body):
 def main():
     conn = sqlite3.connect(database)
 
-    collist = "rowid, source, recipient, groupID, message, attachments, datetime(timestamp, 'localtime')"
+    collist = "rowid, source, recipient, groupID, message, attachments, datetime(timestamp, 'localtime'), expires_in, datetime(seen_at, 'localtime')"
 
     msgdb = conn.execute('select {} from messages order by timestamp asc'
                          .format(collist)).fetchall()
@@ -35,7 +37,14 @@ def main():
 
     for msg in msgdb:
         sigmsg = SignalMessage(msg[6], msg[1], msg[2], msg[3],
-                               msg[4], msg[5], msg[0])
+                               msg[4], msg[5], msg[7], msg[8], msg[0])
+
+        if not sigmsg.seen_at:
+            sigmsg.seen_at = datetime.utcnow()
+            sigmsg.log_to_db(conn)
+
+            conn.commit()
+
         messages.append(sigmsg)
 
     numbers = []
