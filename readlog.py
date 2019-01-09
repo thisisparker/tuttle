@@ -29,7 +29,7 @@ def add_navbar(body):
 def main():
     conn = sqlite3.connect(database)
 
-    collist = "rowid, source, recipient, groupID, message, attachments, datetime(timestamp, 'localtime'), expires_in, datetime(seen_at, 'localtime')"
+    collist = "rowid, source, recipient, groupID, message, attachments, timestamp, expires_in, seen_at"
 
     msgdb = conn.execute('select {} from messages order by timestamp asc'
                          .format(collist)).fetchall()
@@ -40,7 +40,7 @@ def main():
                                msg[4], msg[5], msg[7], msg[8], msg[0])
 
         if not sigmsg.seen_at:
-            sigmsg.seen_at = datetime.utcnow()
+            sigmsg.seen_at = int(datetime.now().timestamp())
             sigmsg.log_to_db(conn)
 
             conn.commit()
@@ -106,10 +106,23 @@ def main():
                 if not msg_text:
                     msg_text = raw('&nbsp;')
 
-                if msg.timestamp:
-                    sent_at = span(' ' + msg.timestamp, cls='timestamp')
+                if msg.localtime:
+                    sent_at = span(' ' + msg.localtime, cls='timestamp')
                 else:
                     sent_at = ''
+
+                disappearing_indicator = ' ⌛&#xFE0E'
+
+                if msg.expires_in:
+                    exp_timestamp = msg.seen_at + msg.expires_in
+                    exp_time = datetime.fromtimestamp(exp_timestamp).isoformat(
+                            sep=' ', timespec='seconds')
+                    exp_remaining = exp_timestamp - int(
+                                                    datetime.now().timestamp())
+                    sent_at += span(raw(disappearing_indicator),
+                            cls='disappearing', 
+                            title='disappears in {:,} seconds at {}'
+                                .format(exp_remaining, exp_time))
 
                 attachment_indicator = ' 📎&#xFE0E'
 

@@ -7,10 +7,9 @@ import sqlite3
 import time
 import shlex
 import shutil
-import yaml
 
-import magic
 import pydbus
+import yaml
 
 import loadsignal
 
@@ -41,9 +40,11 @@ class SignalMessage:
         else:
             self.attachments = None
 
-        if type(self.timestamp) == int:
-            self.timestamp = datetime.utcfromtimestamp(
-                    math.floor(self.timestamp/1000))
+        if type(self.timestamp) == int and len(str(self.timestamp)) > 10:
+            self.timestamp = math.floor(self.timestamp/1000)
+ 
+        self.localtime = datetime.fromtimestamp(self.timestamp).isoformat(
+                                            sep=' ', timespec='seconds')
 
     def log_to_db(self, conn):
         conn.execute("""insert or replace into messages(
