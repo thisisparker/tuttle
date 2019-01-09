@@ -54,6 +54,25 @@ class SignalMessage:
                          self.message, self.attachments, self.timestamp,
                          self.expires_in, self.seen_at))
 
+    def get_expiration_timestamp(self):
+        if self.seen_at and self.expires_in:
+            self.expiration_timestamp = self.seen_at + self.expires_in
+        else:
+            self.expiration_timestamp = False
+
+        return self.expiration_timestamp
+
+    def is_expired(self):
+        if (self.get_expiration_timestamp() and 
+                datetime.fromtimestamp(self.expiration_timestamp) 
+                < datetime.now()):
+            expired = True
+        else:
+            expired = False
+
+        return expired
+
+
 def create_database():
     conn = sqlite3.connect(database)
     schema_script = """create table messages (

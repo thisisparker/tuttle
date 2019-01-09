@@ -10,6 +10,7 @@ from datetime import datetime
 from dominate.tags import *
 from dominate.util import raw
 from logincoming import SignalMessage
+import deletemsg
 
 from settings import NUMBER, database
 
@@ -94,6 +95,10 @@ def main():
 
         with thread.add(ul()):
             for msg in msgs:
+                if msg.is_expired():
+                    deletemsg.single_msg(msg.rowid)
+                    continue
+                
                 if msg.source == num:
                     msg_text = msg.message
                     msg_class = 'tip'
@@ -114,7 +119,7 @@ def main():
                 disappearing_indicator = ' ⌛&#xFE0E'
 
                 if msg.expires_in:
-                    exp_timestamp = msg.seen_at + msg.expires_in
+                    exp_timestamp = msg.get_expiration_timestamp()
                     exp_time = datetime.fromtimestamp(exp_timestamp).isoformat(
                             sep=' ', timespec='seconds')
                     exp_remaining = exp_timestamp - int(
