@@ -7,10 +7,9 @@ import sqlite3
 import time
 import shlex
 import shutil
-import yaml
 
-import magic
 import pydbus
+import yaml
 
 import loadsignal
 
@@ -26,12 +25,14 @@ sitepath = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'static')
 
 class SignalMessage:
     def __init__(self, timestamp, source, recipient, groupID, message, 
-                 attachments, rowid=None):
+                 attachments, expires_in=None, seen_at=None, rowid=None):
         self.timestamp = timestamp
         self.source = source
         self.recipient = recipient
         self.groupID = groupID
         self.message = message
+        self.expires_in = expires_in
+        self.seen_at = seen_at
         self.rowid = rowid
 
         if attachments:
@@ -39,15 +40,38 @@ class SignalMessage:
         else:
             self.attachments = None
 
-        if type(self.timestamp) == int:
-            self.timestamp = datetime.utcfromtimestamp(math.floor(self.timestamp/1000))
+        if type(self.timestamp) == int and len(str(self.timestamp)) > 10:
+            self.timestamp = math.floor(self.timestamp/1000)
+ 
+        self.localtime = datetime.fromtimestamp(self.timestamp).isoformat(
+                                            sep=' ', timespec='seconds')
 
     def log_to_db(self, conn):
-        conn.execute("""insert into messages(
-                     source, recipient, message, attachments, timestamp)
-                     values (?, ?, ?, ?, ?)""",
-                     (self.source, self.recipient, self.message, 
-                         self.attachments, self.timestamp))
+        conn.execute("""insert or replace into messages(
+                            rowid, source, recipient, message, attachments,                                   timestamp, expires_in, seen_at)
+                            values (?, ?, ?, ?, ?, ?, ?, ?)""",
+                     (self.rowid, self.source, self.recipient, 
+                         self.message, self.attachments, self.timestamp,
+                         self.expires_in, self.seen_at))
+
+    def get_expiration_timestamp(self):
+        if self.seen_at and self.expires_in:
+            self.expiration_timestamp = self.seen_at + self.expires_in
+        else:
+            self.expiration_timestamp = False
+
+        return self.expiration_timestamp
+
+    def is_expired(self):
+        if (self.get_expiration_timestamp() and 
+                datetime.fromtimestamp(self.expiration_timestamp) 
+                < datetime.now()):
+            expired = True
+        else:
+            expired = False
+
+        return expired
+
 
 def create_database():
     conn = sqlite3.connect(database)
@@ -58,7 +82,9 @@ def create_database():
                     groupID     text,
                     message     text,
                     attachments text,
-                    timestamp   timestamp);"""
+                    timestamp   timestamp,
+                    expires_in  integer,
+                    seen_at     timestamp);"""
     conn.executescript(schema_script)
     conn.commit()
     conn.close()
@@ -101,6 +127,10 @@ def log_msg(jsonmsg):
         attachments = jsonmsg['dataMessage']['attachments'][0]
     except IndexError as err:
         attachments = []
+    try:
+        expires_in = jsonmsg['dataMessage']['expiresInSeconds']
+    except KeyError as err:
+        expires_in = None
 
     conn = sqlite3.connect(database)
 
@@ -116,7 +146,7 @@ def log_msg(jsonmsg):
         attachments = new_filename
 
     msg = SignalMessage(timestamp, source, NUMBER, groupID, 
-                        message, attachments)
+                        message, attachments, expires_in)
 
     send_autoresponse(msg.source)
     msg.log_to_db(conn)
