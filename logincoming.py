@@ -35,6 +35,8 @@ class SignalMessage:
         self.seen_at = seen_at
         self.rowid = rowid
 
+        self.is_new = None
+
         if attachments:
             self.attachments = attachments
         else:

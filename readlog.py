@@ -46,6 +46,8 @@ def main():
 
             conn.commit()
 
+            sigmsg.is_new = True
+
         messages.append(sigmsg)
 
     numbers = []
@@ -102,6 +104,8 @@ def main():
                 if msg.source == num:
                     msg_text = msg.message
                     msg_class = 'tip'
+                    if msg.is_new:
+                        msg_text = span(msg_text, cls='new-message')
                     sayswho = span('They said: ', cls='sr-only')
                 else:
                     msg_text = msg.message

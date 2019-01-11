@@ -119,6 +119,10 @@ li .tip {
     background: #eee;
 }
 
+li .new-message {
+    font-weight: bold;
+}
+
 li .reply {
     text-align: right;
     background: #ccc;
