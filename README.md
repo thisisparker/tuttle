@@ -2,7 +2,7 @@ This project—codenamed `tuttle`—allows a server to receive Signal messages a
 
 As currently envisioned, `tuttle` could be used as a "tipline" or "help desk," where one or more users can process and reply to secure messages and attachments sent to a public Signal number.
 
-Authentication is not currently built in to `tuttle`, meaning access control is currently performed through `tor`. For now, that involves a trade-off: older `v2` style Onion addresses can be configured to use HidServAuth for authentication, which is not yet available in newer `v3` addresses; but `v3` addresses have more protection against being enumerated by malicious nodes.
+Authentication is not currently built in to `tuttle`, meaning access control is currently performed through `tor`. As of `tor 0.3.5.7`, new Onion services are created as `v3` by default, and client access is managed through that protocol's [Client Authorization](https://www.torproject.org/docs/tor-manual-dev.html.en#_client_authorization) scheme. Address and keypair management aren't currently built into `tuttle`.
 
 ### How it works
 
