@@ -57,7 +57,7 @@ def main():
             numbers.append(msg.source)
 
     h = dominate.document()
-    h.title = 'tipline tips'
+    h.title = 'tuttle inbox - {}'.format(NUMBER)
 
     with h.head:
         link(rel="stylesheet", href="/style.css")
@@ -66,7 +66,7 @@ def main():
 
     body = h.add(div(id='body'))
 
-    body.add(h1("tipline messages"))
+    body.add(h1("tuttle inbox"))
 
     if numbers:
         contactlist = body.add(ul())
