@@ -1,0 +1,5 @@
+notifications:
+    - user: ''
+      number: '+1XXXXXXXXXX'
+
+autoresponder: "Thanks for contacting me. I'll be in touch as soon as I get a chance."
