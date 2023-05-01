@@ -1,5 +1,5 @@
 dominate==2.4.0
-Flask==1.1.1
+Flask==2.3.2
 gobject==0.1.0
 pydbus==0.6.0
 PyGObject==3.34.0
